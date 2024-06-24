@@ -1,6 +1,8 @@
 package ajson
 
-import "fmt"
+import (
+	"errors"
+)
 
 type Reader struct {
 	data         string
@@ -28,9 +30,19 @@ func (r *Reader) Peek() byte {
 	return r.data[r.currentIndex]
 }
 
+func (r *Reader) VisitOrEOF(expected byte) error {
+	if r.IsEOF() {
+		return nil
+	}
+	if r.data[r.currentIndex] != expected {
+		return errors.New(ErrUnexpectedEndOfInput)
+	}
+	return nil
+}
+
 func (r *Reader) Visit(expected byte) error {
 	if r.IsEOF() || r.data[r.currentIndex] != expected {
-		return fmt.Errorf("expected '%c', got '%c'", expected, r.Peek())
+		return errors.New(ErrUnexpectedEndOfInput)
 	}
 
 	r.VisitNext()
@@ -45,6 +57,22 @@ func (r *Reader) VisitIfNext(expected byte) bool {
 	}
 
 	return false
+}
+
+func (r *Reader) PeekEndChar() error {
+	if r.IsEOF() {
+		return nil
+	}
+	if r.data[r.currentIndex] == ',' {
+		return nil
+	}
+	if r.data[r.currentIndex] == ']' {
+		return nil
+	}
+	if r.data[r.currentIndex] == '}' {
+		return nil
+	}
+	return errors.New(ErrUnexpectedEndOfInput)
 }
 
 func (r *Reader) VisitNext() {

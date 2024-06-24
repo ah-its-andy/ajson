@@ -20,6 +20,10 @@ func (decoder *BooleanDecoder) Decode(_ Decoder, n JSONNode, reader *Reader, opt
 			return nil, err
 		}
 
+		if err := reader.PeekEndChar(); err != nil {
+			return nil, err
+		}
+
 		return &JSONConstant{
 			JSONToken: JSONToken{
 				NodeKind:   JSONNodeBoolean,

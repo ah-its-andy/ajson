@@ -6,6 +6,20 @@ import (
 	"github.com/ah-its-andy/ajson"
 )
 
+func GetTestDecoder() ajson.Decoder {
+	decoders := []ajson.Decoder{
+		&ajson.ObjectDecoder{
+			FieldDecoder: &ajson.StringDecoder{},
+		},
+		&ajson.ArrayDecoder{},
+		&ajson.StringDecoder{},
+		&ajson.NumberDecoder{},
+		&ajson.BooleanDecoder{},
+		&ajson.NullDecoder{},
+	}
+	return ajson.NewJSONDecoder(decoders...)
+}
+
 func TestDecode(t *testing.T) {
 	caseStr := `{
 		"name": "root",

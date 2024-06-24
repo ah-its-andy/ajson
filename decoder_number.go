@@ -1,9 +1,5 @@
 package ajson
 
-import (
-	"errors"
-)
-
 type NumberDecoder struct{}
 
 func (decoder *NumberDecoder) CanDecode(_ Decoder, n JSONNode, reader *Reader, options Options) bool {
@@ -17,8 +13,8 @@ func (decoder *NumberDecoder) Decode(_ Decoder, n JSONNode, reader *Reader, opti
 		reader.VisitNext()
 	}
 
-	if reader.IsEOF() {
-		return nil, errors.New("unexpected end of input")
+	if err := reader.PeekEndChar(); err != nil {
+		return nil, err
 	}
 
 	return &JSONConstant{

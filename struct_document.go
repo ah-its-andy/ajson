@@ -18,6 +18,10 @@ func (doc *JSONDocument) Encode() (string, error) {
 	return doc.root.Encode()
 }
 
+func (doc *JSONDocument) String() string {
+	return doc.root.String()
+}
+
 func (doc *JSONDocument) Depth() int {
 	return 0
 }

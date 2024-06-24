@@ -56,7 +56,7 @@ func (decoder *ObjectDecoder) Decode(d Decoder, n JSONNode, reader *Reader, opti
 		reader.SkipWhitespace()
 	}
 
-	if err := reader.Visit('}'); err != nil {
+	if err := reader.VisitOrEOF('}'); err != nil {
 		return nil, err
 	}
 

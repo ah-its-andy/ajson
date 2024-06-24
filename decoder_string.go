@@ -1,7 +1,5 @@
 package ajson
 
-import "errors"
-
 type StringDecoder struct{}
 
 func (decoder *StringDecoder) CanDecode(_ Decoder, n JSONNode, reader *Reader, options Options) bool {
@@ -13,14 +11,20 @@ func (decoder *StringDecoder) Decode(_ Decoder, n JSONNode, reader *Reader, opti
 	}
 
 	value := []byte{}
-	for !reader.IsEOF() && reader.Peek() != '"' {
-		value = append(value, reader.Peek())
+	backslash := false
+	for !reader.IsEOF() && (backslash || reader.Peek() != '"') {
+		if reader.Peek() == '\\' {
+			backslash = true
+		} else {
+			backslash = false
+			value = append(value, reader.Peek())
+		}
 		reader.VisitNext()
 	}
 
-	if reader.IsEOF() {
-		return nil, errors.New("unexpected end of input")
-	}
+	// if reader.IsEOF() {
+	// 	return nil, errors.New("unexpected end of input")
+	// }
 
 	if err := reader.Visit('"'); err != nil {
 		return nil, err

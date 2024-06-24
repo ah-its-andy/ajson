@@ -25,6 +25,7 @@ type JSONNode interface {
 	Depth() int
 
 	Encode() (string, error)
+	String() string
 }
 
 type JsonTokenizer interface {
@@ -63,6 +64,14 @@ func (node *JSONToken) Encode() (string, error) {
 	return "", errors.New("not implemented")
 }
 
+func (node *JSONToken) String() string {
+	v, err := node.Encode()
+	if err != nil {
+		return err.Error()
+	}
+	return v
+}
+
 type JSONConstant struct {
 	JSONToken
 }
@@ -84,7 +93,7 @@ func (node *JSONConstant) Token() *JSONToken {
 
 func (node *JSONConstant) Encode() (string, error) {
 	builder := strings.Builder{}
-	if node.ParentNode.Kind() == JSONNodeObject {
+	if node.ParentNode != nil && node.ParentNode.Kind() == JSONNodeObject {
 		builder.WriteString("\"")
 		builder.WriteString(node.NodeName)
 		builder.WriteString("\" : ")
@@ -107,6 +116,14 @@ func (node *JSONConstant) Encode() (string, error) {
 		return "", fmt.Errorf("unsupported type %v", node.NodeKind)
 	}
 	return builder.String(), nil
+}
+
+func (node *JSONConstant) String() string {
+	v, err := node.Encode()
+	if err != nil {
+		return err.Error()
+	}
+	return v
 }
 
 type JSONBranch struct {
@@ -169,6 +186,14 @@ func (node *JSONBranch) Encode() (string, error) {
 		builder.WriteString("\n")
 	}
 	return builder.String(), nil
+}
+
+func (node *JSONBranch) String() string {
+	v, err := node.Encode()
+	if err != nil {
+		return err.Error()
+	}
+	return v
 }
 
 func (node *JSONBranch) genIntent(depth int) string {
