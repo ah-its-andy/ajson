@@ -37,6 +37,7 @@ func (r *Reader) VisitOrEOF(expected byte) error {
 	if r.data[r.currentIndex] != expected {
 		return errors.New(ErrUnexpectedEndOfInput)
 	}
+	r.VisitNext()
 	return nil
 }
 

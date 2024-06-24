@@ -1,5 +1,10 @@
 package ajson
 
+import (
+	"errors"
+	"strconv"
+)
+
 type JSONPathNodeKind int
 
 const (
@@ -60,6 +65,9 @@ func (jpexpr *JSONPathExpression) Compile() error {
 			}
 			currentIndex++
 			node.Name = string(nameChars)
+			if _, err := strconv.ParseInt(node.Name, 10, 64); err != nil {
+				return errors.New(ErrUnexceptedToken)
+			}
 			nodes = append(nodes, node)
 			continue
 		} else if currentChar == '.' {
